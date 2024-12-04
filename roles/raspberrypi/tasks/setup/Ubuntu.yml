@@ -1,14 +1,14 @@
 ---
-- name: Enable cgroup via boot commandline if not already enabled for Ubuntu on a Raspberry Pi
+- name: Enable cgroup via GRUB commandline if not already enabled for standard Ubuntu
   ansible.builtin.lineinfile:
-    path: /boot/firmware/cmdline.txt
+    path: /etc/default/grub
     backrefs: true
-    regexp: ^((?!.*\bcgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory\b).*)$
-    line: \1 cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory
-  notify: reboot
+    regexp: '^GRUB_CMDLINE_LINUX="(.*)"'
+    line: 'GRUB_CMDLINE_LINUX="\1 cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory"'
+  notify: update-grub
 
-- name: Install linux-modules-extra-raspi
+- name: Install linux-modules-extra package if necessary
   ansible.builtin.apt:
-    name: linux-modules-extra-raspi
+    name: linux-modules-extra-$(uname -r)
     state: present
   when: ansible_distribution_version is version('24.04', '<')
