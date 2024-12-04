@@ -3,3 +3,8 @@
   ansible.builtin.reboot:
     reboot_command: "{{ custom_reboot_command | default(omit) }}"
   listen: reboot
+
+- name: update-grub
+  ansible.builtin.command:
+    cmd: update-grub
+  when: ansible_distribution != "Raspbian"
