@@ -47,8 +47,8 @@
         cmd: "{{ k3s_kubectl_binary | default('k3s kubectl') }} get nodes -l 'node-role.kubernetes.io/master=true' -o=jsonpath='{.items[*].metadata.name}'" # yamllint disable-line rule:line-length
       register: nodes
       until: nodes.rc == 0 and (nodes.stdout.split() | length) == (groups[group_name_master | default('master')] | length) # yamllint disable-line rule:line-length
-      retries: "{{ retry_count | default(20) }}"
-      delay: 10
+      retries: 50
+      delay: 15
       changed_when: false
   always:
     - name: Save logs of k3s-init.service
